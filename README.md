@@ -10,18 +10,18 @@
 
 1. Create and activate conda environment
 
-```
-conda create --name env_name python==3.11
+```bash
+conda create --name env_name python==3.11 -y
 conda activate env_name
 ```
 
 2. Install dependencies
-```
+```bash
 pip install -r requirements.txt
 ```
 
 3. start the application
-```
+```bash
 python demo.py
 ```
 
@@ -29,18 +29,18 @@ python demo.py
 
 1. Build the docker image
 
-```
-docker compose build
+```bash
+docker compose build --no-cache --progress=plain | tee build.log
 ```
 
 2. Start the application
 
-```
-docker comose -d up
+```bash
+docker compose up
 ```
 
 **Note**: Delete the container after usage
 
-```
+```bash
 docker compose down
 ```
