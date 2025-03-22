@@ -22,22 +22,23 @@ logger = setup_logger(pkgname=MLFLOW_EXPERIMENT)
 class ML_MODELS:
     def __init__(self, 
         run_id: str,
+        target_column: str = "Class",
         save_models: bool = True,
         save_folder: str = "weights"):
         self.run_id = run_id
         self.save_models = save_models
         self.save_folder = save_folder
+        self.target_column = target_column
 
     def split_data(self, 
         data: pd.DataFrame, 
-        target_column: str = "Class", 
         split_ratio: float = 0.8,
         random_state: int = 42):
-        X = data.drop(columns = [target_column])
+        X = data.drop(columns = [self.target_column])
         y = data[self.target_column]
         return train_test_split(X,
         y,train_size=split_ratio,
-        test_size=1-split_ratio,
+        test_size=1-float(split_ratio),
         random_state=random_state,
         stratify=y)
 
@@ -50,7 +51,7 @@ class ML_MODELS:
         X_train_scaled = standard_scaler.fit_transform(X_train)
         X_test_scaled = standard_scaler.transform(X_test)
         model = LogisticRegression(max_iter=1000)
-        logger.info(f"Started {type(model).__name__}")
+        logger.info(f"Started {type(model).__name__} training")
         model.fit(X_train_scaled, y_train)
         y_pred = model.predict(X_test_scaled)
         if self.save_models:
@@ -67,7 +68,7 @@ class ML_MODELS:
         y_train : pd.DataFrame,
         y_test : pd.DataFrame):
         model = DecisionTreeClassifier()
-        logger.info(f"Started {type(model).__name__}")
+        logger.info(f"Started {type(model).__name__} training")
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         if self.save_models:
@@ -85,7 +86,7 @@ class ML_MODELS:
         y_test : pd.DataFrame,
         n_neighbours: int = 5):
         model = KNeighborsClassifier(n_neighbors= n_neighbours)
-        logger.info(f"Started {type(model).__name__}")
+        logger.info(f"Started {type(model).__name__} training")
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         if self.save_models:
@@ -103,7 +104,7 @@ class ML_MODELS:
         y_test : pd.DataFrame,
         n_estimators: int = 100):
         model = RandomForestClassifier(n_estimators=n_estimators)
-        logger.info(f"Started {type(model).__name__}")
+        logger.info(f"Started {type(model).__name__} training")
         model.fit(X_train,y_train)
         y_pred = model.predict(X_test)
         if self.save_models:
@@ -124,7 +125,7 @@ class ML_MODELS:
         model = XGBClassifier(
         use_label_encoder=use_label_encoder, 
         eval_metric=eval_metric)
-        logger.info(f"Started {type(model).__name__}")
+        logger.info(f"Started {type(model).__name__} training")
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         if self.save_models:

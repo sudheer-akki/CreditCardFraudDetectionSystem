@@ -31,7 +31,7 @@ class DataExplore:
         self.data = data
         self.results = {} 
         self.results['report'] = self.data_explore()
-        if save_report_and_push:
+        if save_report:
             with open("report.json", "w") as outfile:
                 json.dump(self.results['report'], outfile, cls=NpEncoder)
 

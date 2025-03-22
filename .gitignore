@@ -1,5 +1,4 @@
 # Byte-compiled / optimized / DLL files
-.env
 __pycache__/
 *.py[cod]
 *$py.class
@@ -14,13 +13,9 @@ scaled_data.csv
 plots
 backup
 *.yml
-weights
 Dataset
 terraform
 
-
-# ignore env files
-.env
 # C extensions
 *.so
 
@@ -52,12 +47,16 @@ terraform.lock.*
 *.tfstate
 terraform/.terraform.lock.hcl
 terraform/.terraform/providers/
-
+weights/
+!weights/RandomForestClassifier.pkl
+mlruns/
+notebooks/
 
 #Ignoring local files
 /build
 /logs
 *.param
 *.sh
+!start_mlflow.sh
 
 

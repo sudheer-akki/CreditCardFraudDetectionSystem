@@ -15,12 +15,12 @@ DATASET = os.getenv('DATASET')
 MLFLOW_TRACKING_URI = os.getenv('MLFLOW_TRACKING_URI')
 MLFLOW_EXPERIMENT= os.getenv('EXPERIMENT_NAME')
 MODEL_NAME = os.getenv('MODEL_NAME')
-SPLIT_RATIO = os.getenv('SPLIT_RATIO')
+SPLIT_RATIO = float(os.getenv('SPLIT_RATIO'))
 logger = setup_logger(pkgname=MLFLOW_EXPERIMENT)
 
 #Loading .csv file
 data = load_data(file_path=DATASET)
-data = data.drop(columns=["id"])
+data = data.drop(columns=["Time"])
 
 #Setting up the MLFlow Server
 run_id = setup_mlflow_run(
@@ -29,7 +29,7 @@ run_id = setup_mlflow_run(
 
 explored_data = DataExplore(
                 data=data, 
-                save_and_push_to_mlflow=False)
+                save_report=False)
 explored_results = explored_data.get_results()
 report = explored_results['report']
 
@@ -66,33 +66,37 @@ data_proc = DataProcess(
 data_processed = data_proc.get_results()
 
 models = ML_MODELS(run_id=run_id,
+        target_column="Class",
         save_folder= "weights",
         save_models=True)
 
 X_train, X_test, y_train, y_test = models.split_data(
                                         data=data_processed,
-                                        target_column="Class",
                                         split_ratio=SPLIT_RATIO)
 
-with mlflow.active_run(run_id=run_id):
+with mlflow.start_run(run_id=run_id):
     models.decision_tree(X_train=X_train,
     X_test=X_test,
     y_train=y_train,
     y_test=y_test)
-    
 
+# with mlflow.start_run(run_id=run_id):
+#     models.random_forest(X_train=X_train,
+#     X_test=X_test,
+#     y_train=y_train,
+#     y_test=y_test)
 
-import sys
-sys.exit()
+# with mlflow.start_run(run_id=run_id):
+#     models.xgboost(X_train=X_train,
+#     X_test=X_test,
+#     y_train=y_train,
+#     y_test=y_test)
 
-run = mlflow.get_run(run.info.run_id)
-
-pd.DataFrame(data=[run.data.params], index=["Value"]).T
-pd.DataFrame(data=[run.data.metrics], index=["Value"]).T
-
-client = mlflow.tracking.MlflowClient()
-client.list_artifacts(run_id=run.info.run_id)
-file_path = mlflow.artifacts.download_artifacts(
-    run_id=run.info.run_id, artifact_path="feature_importance_weight.png"
-)
+# with mlflow.start_run(run_id=run_id):
+#     models.knn(X_train=X_train,
+#     X_test=X_test,
+#     y_train=y_train,
+#     y_test=y_test)
+     
+logger.info("\nTraining Completed..!!!")
 
