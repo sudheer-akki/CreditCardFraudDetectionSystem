@@ -1,18 +1,13 @@
-import os
 import json
-from dotenv import load_dotenv
+from typing import Optional
+import logging
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from typing import List, Dict, Union
-from mlproject.logging import setup_logger
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from scipy.stats import shapiro, normaltest
-
-load_dotenv()
-MLFLOW_EXPERIMENT= os.getenv('EXPERIMENT_NAME')
-logger = setup_logger(pkgname=MLFLOW_EXPERIMENT)
 
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -56,6 +51,7 @@ class DataExplore:
 class DataProcess:
     def __init__(self, 
                 data: pd.DataFrame,
+                logger:  Optional[logging.Logger],
                 remove_duplicate: bool = True,
                 remove_null: bool = True,
                 remove_missing: bool = True,
@@ -65,6 +61,7 @@ class DataProcess:
                 scale_features: bool = True,
                 drop_column: List[str] =["Class", "Amount"]) -> None:
         self.data = data.copy()
+        self.logger = logger
         if remove_duplicate:
             self.data = self.remove_duplicate(data=self.data)
         if remove_null:
@@ -77,7 +74,7 @@ class DataProcess:
             self.data = self.check_normality_and_scale(data=self.data, drop_column = drop_column)
         if remove_outliers:
             self.data = self.remove_outliers(data=self.data,drop_column = drop_column)
-        logger.info("Completed preprocessing")
+        self.logger.info("Completed preprocessing")
 
     def remove_duplicate(self, data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -92,7 +89,7 @@ class DataProcess:
         initial_count = data.shape[0]
         data = data.drop_duplicates()
         removed_count = initial_count - data.shape[0]
-        logger.info(f"Removed {removed_count} duplicate rows.")
+        self.logger.info(f"Removed {removed_count} duplicate rows.")
         return data
 
     def remove_null(self, data: pd.DataFrame) -> pd.DataFrame:
@@ -108,7 +105,7 @@ class DataProcess:
         initial_count = data.shape[0]
         data = data.dropna()
         removed_count = initial_count - data.shape[0]
-        logger.info(f"Removed {removed_count} rows with null values.")
+        self.logger.info(f"Removed {removed_count} rows with null values.")
         return data
 
     def handle_missing(self,
@@ -132,7 +129,7 @@ class DataProcess:
             if data[column].dtype == object:
                 if categorical_handle == "mode":
                     data[column].fillna(data[column].mode()[0],inplace=True)
-        logger.info(f"Filled Missing values with {numerical_handle}, {categorical_handle}")
+        self.logger.info(f"Filled Missing values with {numerical_handle}, {categorical_handle}")
         return data
 
     def remove_outliers(self, 
@@ -222,7 +219,7 @@ class DataProcess:
         return self.data
 
 
-def load_data(file_path):
+def load_data(file_path, logger):
     try:
         return pd.read_csv(file_path)
     except FileNotFoundError:

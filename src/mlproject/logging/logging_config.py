@@ -8,7 +8,7 @@ import sys
 LOGGING_STR = "%(asctime)s: %(levelname)s: %(module)s: %(message)s"
 #LOG_DIR = "logs"
 
-def setup_logger(pkgname, log_dir = "logs"):
+def setup_logger(pkgname: str, log_dir: str = "logs"):
     """
     Sets up and returns a logger with the given package name.
 
@@ -19,7 +19,7 @@ def setup_logger(pkgname, log_dir = "logs"):
         logging.Logger: Configured logger instance.
     """
     os.makedirs(log_dir, exist_ok=True)
-    LOG_FILEPATH = os.path.join(log_dir, "rag_log.log")
+    LOG_FILEPATH = os.path.join(log_dir, "mlproject.log")
     # Create logger for the package
     logger = logging.getLogger(pkgname)
     logger.setLevel(logging.INFO)  # Default log level

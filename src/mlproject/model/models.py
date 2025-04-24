@@ -1,5 +1,6 @@
 import pandas as pd
-import os
+from typing import Optional
+import logging
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -10,22 +11,17 @@ from mlproject.components import evaluate_model
 import pickle
 import mlflow
 from sklearn.preprocessing import StandardScaler
-from mlproject.logging import setup_logger
-from dotenv import load_dotenv
-
-load_dotenv()
-MLFLOW_EXPERIMENT= os.getenv('EXPERIMENT_NAME')
-logger = setup_logger(pkgname=MLFLOW_EXPERIMENT)
-
 
 
 class ML_MODELS:
     def __init__(self, 
         run_id: str,
+        logger:  Optional[logging.Logger],
         target_column: str = "Class",
         save_models: bool = True,
         save_folder: str = "weights"):
         self.run_id = run_id
+        self.logger = logger
         self.save_models = save_models
         self.save_folder = save_folder
         self.target_column = target_column
@@ -51,7 +47,7 @@ class ML_MODELS:
         X_train_scaled = standard_scaler.fit_transform(X_train)
         X_test_scaled = standard_scaler.transform(X_test)
         model = LogisticRegression(max_iter=1000)
-        logger.info(f"Started {type(model).__name__} training")
+        self.logger.info(f"Started {type(model).__name__} training")
         model.fit(X_train_scaled, y_train)
         y_pred = model.predict(X_test_scaled)
         if self.save_models:
@@ -59,7 +55,7 @@ class ML_MODELS:
             with open(model_path, "wb") as f:
                 pickle.dump(model, f)
             mlflow.log_artifact(model_path, artifact_path=f"models/{type(model).__name__}", run_id=self.run_id)
-        logger.info(f"Completed {type(model).__name__}")
+        self.logger.info(f"Completed {type(model).__name__}")
         return evaluate_model(type(model).__name__, y_test, y_pred,self.run_id)
 
     def decision_tree(self,
@@ -68,7 +64,7 @@ class ML_MODELS:
         y_train : pd.DataFrame,
         y_test : pd.DataFrame):
         model = DecisionTreeClassifier()
-        logger.info(f"Started {type(model).__name__} training")
+        self.logger.info(f"Started {type(model).__name__} training")
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         if self.save_models:
@@ -76,7 +72,7 @@ class ML_MODELS:
             with open(model_path, "wb") as f:
                 pickle.dump(model, f)
             mlflow.log_artifact(model_path, artifact_path=f"models/{type(model).__name__}", run_id=self.run_id)
-        logger.info(f"Completed {type(model).__name__}")
+        self.logger.info(f"Completed {type(model).__name__}")
         return evaluate_model(type(model).__name__,y_test, y_pred,self.run_id)
 
     def knn(self,
@@ -86,7 +82,7 @@ class ML_MODELS:
         y_test : pd.DataFrame,
         n_neighbours: int = 5):
         model = KNeighborsClassifier(n_neighbors= n_neighbours)
-        logger.info(f"Started {type(model).__name__} training")
+        self.logger.info(f"Started {type(model).__name__} training")
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         if self.save_models:
@@ -94,7 +90,7 @@ class ML_MODELS:
             with open(model_path, "wb") as f:
                 pickle.dump(model, f)
             mlflow.log_artifact(model_path, artifact_path=f"models/{type(model).__name__}", run_id=self.run_id)
-        logger.info(f"Completed {type(model).__name__}")
+        self.logger.info(f"Completed {type(model).__name__}")
         return evaluate_model(type(model).__name__,y_test, y_pred,self.run_id)
 
     def random_forest(self,
@@ -104,7 +100,7 @@ class ML_MODELS:
         y_test : pd.DataFrame,
         n_estimators: int = 100):
         model = RandomForestClassifier(n_estimators=n_estimators)
-        logger.info(f"Started {type(model).__name__} training")
+        self.logger.info(f"Started {type(model).__name__} training")
         model.fit(X_train,y_train)
         y_pred = model.predict(X_test)
         if self.save_models:
@@ -112,7 +108,7 @@ class ML_MODELS:
             with open(model_path, "wb") as f:
                 pickle.dump(model, f)
             mlflow.log_artifact(model_path, artifact_path=f"models/{type(model).__name__}", run_id=self.run_id)
-        logger.info(f"Completed {type(model).__name__}")
+        self.logger.info(f"Completed {type(model).__name__}")
         return evaluate_model(type(model).__name__,y_test, y_pred,self.run_id)
 
     def xgboost(self,
@@ -125,7 +121,7 @@ class ML_MODELS:
         model = XGBClassifier(
         use_label_encoder=use_label_encoder, 
         eval_metric=eval_metric)
-        logger.info(f"Started {type(model).__name__} training")
+        self.logger.info(f"Started {type(model).__name__} training")
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
         if self.save_models:
@@ -133,6 +129,6 @@ class ML_MODELS:
             with open(model_path, "wb") as f:
                 pickle.dump(model, f)
             mlflow.log_artifact(model_path, artifact_path=f"models/{type(model).__name__}", run_id=self.run_id)
-        logger.info(f"Completed {type(model).__name__}")
+        self.logger.info(f"Completed {type(model).__name__}")
         return evaluate_model(type(model).__name__,y_test, y_pred,self.run_id)
     

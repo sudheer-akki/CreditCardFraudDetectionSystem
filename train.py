@@ -19,13 +19,14 @@ SAVE_FOLDER = config.MODEL.SAVE_FOLDER
 logger = setup_logger(pkgname=MLFLOW_EXPERIMENT)
 
 #Loading .csv file
-data = load_data(file_path=DATASET)
+data = load_data(file_path=DATASET, logger=logger)
 data = data.drop(columns=["Time"])
 
 #Setting up the MLFlow Server
 run_id = setup_mlflow_run(
     mlflow_tracking_uri=MLFLOW_TRACKING_URI,
-    mlflow_experiment=MLFLOW_EXPERIMENT)
+    mlflow_experiment=MLFLOW_EXPERIMENT,
+    logger=logger)
 
 explored_data = DataExplore(
                 data=data, 
@@ -43,6 +44,7 @@ with mlflow.start_run(run_id=run_id):  # Activate the run
 
 DataVisualize(data=data,
             save_path="plots",
+            logger=logger,
             pie_chart= True,
             histogram= True,
             bar_chart = True,
@@ -56,6 +58,7 @@ mlflow.log_artifact(local_path="plots",run_id=run_id)
 
 data_proc = DataProcess(
             data=data,
+            logger=logger,
             remove_duplicate = True,
             remove_null = True,
             remove_outliers = False,

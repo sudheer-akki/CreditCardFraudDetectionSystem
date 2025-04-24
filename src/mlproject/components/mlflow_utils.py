@@ -1,14 +1,11 @@
 import mlflow
-import os
+import logging
+from typing import Optional
 import subprocess
-from mlproject.logging import setup_logger
-from dotenv import load_dotenv
-load_dotenv()
-MLFLOW_EXPERIMENT= os.getenv('EXPERIMENT_NAME')
-# Set up logger
-logger = setup_logger(pkgname=MLFLOW_EXPERIMENT)
 
-def setup_mlflow_run(mlflow_tracking_uri, mlflow_experiment):
+def setup_mlflow_run(mlflow_tracking_uri: str, 
+                    mlflow_experiment: str, 
+                    logger:  Optional[logging.Logger]):
     """
     Sets up MLflow tracking, ensures the experiment exists, and starts a new run.
 

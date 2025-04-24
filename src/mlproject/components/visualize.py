@@ -1,25 +1,18 @@
+
+from typing import Optional
+import logging
 import numpy as np
 import pandas as pd
-import os
 import matplotlib.pyplot as plt
-from typing import List, Dict, Union
+from typing import List, Union
 import seaborn as sns
-from mlproject.logging import setup_logger
-import json
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from scipy.stats import shapiro, normaltest
-from tabulate import tabulate
-from dotenv import load_dotenv
-
-load_dotenv()
-MLFLOW_EXPERIMENT= os.getenv('EXPERIMENT_NAME')
-logger = setup_logger(pkgname=MLFLOW_EXPERIMENT)
 
 class DataVisualize:
     def __init__(self, 
                 data: pd.DataFrame,
                 save_path: str,
                 run_id: str,
+                logger:  Optional[logging.Logger],
                 pie_chart: bool = True,
                 histogram: bool = True,
                 bar_chart: bool = True,
@@ -28,6 +21,7 @@ class DataVisualize:
                 scatter_plot: bool = True,
                 show_outliers: bool = True
                 ) -> None:
+        self.logger = logger
         self.data = data.fillna(0)
         self.savepath = save_path
         self.run_id = run_id
@@ -119,7 +113,7 @@ class DataVisualize:
     
     def bar_chart(self, column: str = None):
         if column is None:
-            logger.info(f"No Bar chart due to empty column input")
+            self.logger.info(f"No Bar chart due to empty column input")
         else:
             if column in self.data.columns:
                 sns.countplot(data=self.data, x = column)
@@ -145,7 +139,7 @@ class DataVisualize:
     
     def histogram(self,column: str = None, bin_count: int = 20):
         if column is None:
-            logger.info("Unable to plot histogram due to empty column")
+            self.logger.info("Unable to plot histogram due to empty column")
         else:
             if column in self.data.columns:
                 self.data[column].plot(kind='hist', bins = bin_count)
