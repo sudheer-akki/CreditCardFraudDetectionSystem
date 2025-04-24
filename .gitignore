@@ -1,0 +1,62 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.packaging
+*.png
+data.csv
+cleaned.csv
+scaled_data.csv
+*.json
+*.pkl
+*.log
+plots
+backup
+*.yml
+Dataset
+terraform
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ignore local Terraform files
+terraform.lock.*
+*.tfvars
+*.tfstate*
+# Ignore Terraform state files
+*.tfstate
+terraform/.terraform.lock.hcl
+terraform/.terraform/providers/
+weights/
+!weights/RandomForestClassifier.pkl
+mlruns/
+notebooks/
+
+#Ignoring local files
+/build
+/logs
+*.param
+*.sh
+!start_mlflow.sh
+
+
