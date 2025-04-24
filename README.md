@@ -76,4 +76,9 @@ python train.py
 ```
 **Note:** Trained Models will be saved into Weights folder.
 
+## Support
+
+If you like this project, please consider supporting it with a ⭐!
+
+
 
