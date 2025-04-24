@@ -60,7 +60,7 @@ docker compose down
 
 #### To train the Model
 
-1. Update .env file and run the below script
+1. Update config file and run the below script
 
 2. Start the MLflow Server
 
