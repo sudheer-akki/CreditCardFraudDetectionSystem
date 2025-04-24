@@ -4,7 +4,7 @@ imblearn==0.0
 joblib==1.4.2
 kaggle==1.7.4.2
 matplotlib==3.10.1
-mlflow==2.19.0
+mlflow>=2.20.3
 mlflow_skinny==2.19.0
 numpy==2.2.5
 omegaconf==2.3.0
