@@ -13,8 +13,6 @@ scaled_data.csv
 plots
 backup
 *.yml
-Dataset
-terraform
 
 # C extensions
 *.so
@@ -39,14 +37,6 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# ignore local Terraform files
-terraform.lock.*
-*.tfvars
-*.tfstate*
-# Ignore Terraform state files
-*.tfstate
-terraform/.terraform.lock.hcl
-terraform/.terraform/providers/
 weights/
 !weights/RandomForestClassifier.pkl
 mlruns/
@@ -58,5 +48,3 @@ notebooks/
 *.param
 *.sh
 !start_mlflow.sh
-
-

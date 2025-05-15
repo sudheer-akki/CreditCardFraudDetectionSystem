@@ -1,7 +1,9 @@
+import os
 from fastapi import FastAPI
 from pydantic import BaseModel
 import joblib
 import numpy as np
+import uvicorn
 
 app = FastAPI()
 
@@ -60,3 +62,23 @@ def predict(transaction: Transaction):
         "fraud_prediction": bool(prediction[0]),
         "fraud_probability": fraud_probability
     }
+
+
+@app.get("/")
+async def read_root():
+    return {"message": "Hello, World!"}
+
+
+@app.get("/health")
+async def health():
+    return {"status": "OK"}
+
+
+if __name__=="__main__":
+    uvicorn.run(
+    "main:app",
+    host=os.getenv("HOST", "127.0.0.1"),
+    port=int(os.getenv("PORT", 8000)),
+    reload=True,
+    reload_delay=1.0
+    )
