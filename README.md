@@ -29,7 +29,7 @@ conda activate env_name
 ```
 
 2. Install dependencies
-``sh
+```sh
 pip install -r requirements.txt
 ```
 
@@ -46,7 +46,7 @@ python test_api.py
 
 5. To test the model
 ```sh
-python test.py
+python test_model.py
 ```
 
 #### Instructions for Docker
